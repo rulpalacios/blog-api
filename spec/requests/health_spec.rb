@@ -12,7 +12,7 @@ RSpec.describe 'Health endpoint', type: :request do
     end
 
     it 'should return status code 200' do
-      expect(response).to have_http_status(200)
+      expect(response).to have_http_status(:ok)
     end
   end
 end
