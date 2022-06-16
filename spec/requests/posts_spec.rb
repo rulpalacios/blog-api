@@ -6,7 +6,7 @@ RSpec.describe 'Posts', type: :request do
 
     it 'should return OK' do
       payload = JSON.parse(response.body)
-      expect(payload).to be_empty
+      expect(payload['data']).to be_empty
       expect(response).to have_http_status(:ok)
     end
   end
@@ -16,7 +16,7 @@ RSpec.describe 'Posts', type: :request do
     before { get '/posts' }
     it 'should return all the published posts' do
       payload = JSON.parse(response.body)
-      expect(payload.size).to eq(posts.size)
+      expect(payload['data'].size).to eq(posts.size)
       expect(response).to have_http_status(:ok)
     end
   end
@@ -28,7 +28,11 @@ RSpec.describe 'Posts', type: :request do
       get "/posts/#{post.id}"
       payload = JSON.parse(response.body)
       expect(payload).not_to be_empty
-      expect(payload['id']).to eq(post.id)
+      expect(payload['data']['attributes']['id']).to eq(post.id)
+      expect(payload['data']['attributes']['title']).to eq(post.title)
+      expect(payload['data']['attributes']['content']).to eq(post.content)
+      expect(payload['data']['attributes']['author']['name']).to eq(post.user.name)
+      expect(payload['data']['attributes']['author']['email']).to eq(post.user.email)
       expect(response).to have_http_status(:ok)
     end
   end
@@ -50,7 +54,7 @@ RSpec.describe 'Posts', type: :request do
       payload = JSON.parse(response.body)
 
       expect(payload).not_to be_empty
-      expect(payload['id']).not_to be_nil
+      expect(payload['data']['attributes']['id']).not_to be_nil
       expect(response).to have_http_status(:created)
     end
 
@@ -86,7 +90,7 @@ RSpec.describe 'Posts', type: :request do
       put "/posts/#{article.id}", params: req_payload
       payload = JSON.parse(response.body)
       expect(payload).to_not be_empty
-      expect(payload['id']).to eq(article.id)
+      expect(payload['data']['attributes']['id']).to eq(article.id)
       expect(response).to have_http_status(:ok)
     end
 
